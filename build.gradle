@@ -1,0 +1,58 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '4.0.6'
+	id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'ai.support'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+ext {
+	set('springAiVersion', "2.0.0-M8")
+}
+
+dependencies {
+
+    // Core Web & Database Persistence
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-webmvc")
+
+    runtimeOnly("org.postgresql:postgresql")
+
+    // GenAI Engine (OpenAI Managed clean through the BOM)
+    //implementation("org.springframework.ai:spring-ai-starter-model-openai")
+    implementation("org.springframework.ai:spring-ai-starter-model-ollama")
+
+    // Vector Database Integration (For turning PostgreSQL into a vector store)
+    implementation("org.springframework.ai:spring-ai-starter-vector-store-pgvector")
+
+    // Swagger/OpenAPI for testing REST endpoints in a UI browser
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.2")
+
+    // Standard Testing Frameworks
+    testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
+	}
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
